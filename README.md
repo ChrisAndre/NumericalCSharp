@@ -1,0 +1,4 @@
+NumericalCSharp
+===============
+
+Numerical computation dump
