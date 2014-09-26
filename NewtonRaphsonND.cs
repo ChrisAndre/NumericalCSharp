@@ -7,8 +7,8 @@ namespace NumericalCSharp
         public class MultivariableFunction
         {
             public MultivariableFunction(Function f, Derivative delta)
+                : this(f)
             {
-                this.f = f;
                 this.delta = delta;
             }
             public MultivariableFunction(Function f)
@@ -19,11 +19,12 @@ namespace NumericalCSharp
             public delegate double[] Derivative(double[] variables, double[] constants);
             Function f;
             Derivative delta = null;
+            const double derivativeSpread = 1e-8;
             public double eval(double[] variables, double[] constants)
             {
                 return f(variables, constants);
             }
-            public double[] gradient(double[] variables, double[] constants, double spread = 0.01)
+            public double[] gradient(double[] variables, double[] constants, double spread = derivativeSpread)
             {
                 if (delta == null)
                 {
@@ -39,7 +40,7 @@ namespace NumericalCSharp
                     return delta(variables, constants);
                 }
             }
-            double singleVariableDerivative(double[] variables, double[] constants, int index, double spread = 0.01)
+            double singleVariableDerivative(double[] variables, double[] constants, int index, double spread = derivativeSpread)
             {
                 variables[index] += spread;
                 double fp = f(variables, constants);
@@ -47,7 +48,7 @@ namespace NumericalCSharp
                 double fm = f(variables, constants);
                 return (fp - fm) / 2 / spread;
             }
-            double singleVariableDerivative2(double[] variables, double[] constants, int index, double spread = 0.01)
+            double singleVariableDerivative2(double[] variables, double[] constants, int index, double spread = derivativeSpread)
             {
                 double fc = f(variables, constants);
                 variables[index] += spread;
