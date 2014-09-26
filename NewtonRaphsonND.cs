@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GaussNewton
+namespace NumericalCSharp
 {
     class NewtonRaphsonND
     {

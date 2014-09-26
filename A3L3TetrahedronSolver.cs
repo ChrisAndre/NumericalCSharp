@@ -1,13 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace GaussNewton
+namespace NumericalCSharp
 {
     class A3L3TetrahedronSolver
     {
         private NewtonRaphsonND approx;
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="maxIterations">Iterations the Newton-Raphson solver should use at maximum.</param>
+        /// <param name="targetTolerance">Used in least squares; lower generally more accurate. Use caution.</param>
+        /// <param name="deltaScaling">Scales Newton-Raphson jumps for faster long-distance convergence. Do not go above 2.</param>
         public A3L3TetrahedronSolver(int maxIterations = 5000, double targetTolerance = 1e-10, double deltaScaling = 1.5)
         {
             var func = new NewtonRaphsonND.MultivariableFunction(leastSquares, dLeastSquares);
@@ -16,6 +19,18 @@ namespace GaussNewton
             approx.setTargetTolerance(targetTolerance);
             approx.setDeltaAttenuation(deltaScaling);
         }
+        /// <summary>
+        /// Evolves side lengths in initialGuess using newton-raphson and non-linear least squares.
+        /// </summary>
+        /// <param name="a">Side a of base triangle.</param>
+        /// <param name="b">Side b of base triangle.</param>
+        /// <param name="c">Side c of base triangle.</param>
+        /// <param name="theta_a">Angle between apex, a, and b.</param>
+        /// <param name="theta_b">Angle between apex, b, and c.</param>
+        /// <param name="theta_c">Angle between apex, c, and a.</param>
+        /// <param name="initialGuess">Contains sidelengths to be evolved.</param>
+        /// <returns>Iterations used.</returns>
+        /// <remarks>Algorithm sometimes fails to converge when initialGuess lengths start out lower than actual lengths; have them longer than anticipated.</remarks>
         public int solve(double a, double b, double c, double theta_a, double theta_b, double theta_c, double[] initialGuess)
         {
             double[] constants = new double[6] { a, b, c, theta_a, theta_b, theta_c };
