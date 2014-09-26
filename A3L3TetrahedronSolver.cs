@@ -7,17 +7,14 @@ namespace GaussNewton
 {
     class A3L3TetrahedronSolver
     {
-        public MVNRA approx;
-        public static double scalingFactor = 1;
-        //strip negatives on i,j,k and a,b,c; may be causing divergence because of borked derivatives
-        public A3L3TetrahedronSolver()
+        private NewtonRaphsonND approx;
+        public A3L3TetrahedronSolver(int maxIterations = 5000, double targetTolerance = 1e-10, double deltaScaling = 1.5)
         {
-            var func = new MVNRA.MultivariableFunction(leastSquares, dLeastSquares);
-            approx = new MVNRA(func);
-            approx.setMaxIterations(5000);
-            approx.setTargetTolerance(1e-10);
-            approx.setDeltaAttenuation(1.5);
-            //approx.setUseAllIterations(true);
+            var func = new NewtonRaphsonND.MultivariableFunction(leastSquares, dLeastSquares);
+            approx = new NewtonRaphsonND(func);
+            approx.setMaxIterations(maxIterations);
+            approx.setTargetTolerance(targetTolerance);
+            approx.setDeltaAttenuation(deltaScaling);
         }
         public int solve(double a, double b, double c, double theta_a, double theta_b, double theta_c, double[] initialGuess)
         {
@@ -26,9 +23,9 @@ namespace GaussNewton
             approx.run(initialGuess, constants, ref iters);
             return iters;
         }
-        //Switch to cosines rather than reevaluating
-        public static double leastSquares(double[] sideLengths, double[] constants)
+        private static double leastSquares(double[] sideLengths, double[] constants)
         {
+            //TODO: switch to cosines rather than reevaluating
             double i = Math.Abs(sideLengths[0]);
             double j = Math.Abs(sideLengths[1]);
             double k = Math.Abs(sideLengths[2]);
@@ -41,10 +38,10 @@ namespace GaussNewton
             double _return = Math.Pow(lawOfCosines(a, i, j, theta_a), 2) +
                    Math.Pow(lawOfCosines(b, j, k, theta_b), 2) +
                    Math.Pow(lawOfCosines(c, k, i, theta_c), 2);
-            return scalingFactor * _return;
+            return _return;
             // zero of leastSquares is where all functions have zero values;
         }
-        public static double[] dLeastSquares(double[] sideLengths, double[] constants)
+        private static double[] dLeastSquares(double[] sideLengths, double[] constants)
         {
             double i = Math.Abs(sideLengths[0]);
             double j = Math.Abs(sideLengths[1]);
@@ -62,10 +59,9 @@ namespace GaussNewton
             ret[0] = 4 * fa * (i - j * Math.Cos(theta_a)) + 4 * fc * (i - k * Math.Cos(theta_c));
             ret[1] = 4 * fa * (j - i * Math.Cos(theta_a)) + 4 * fb * (j - k * Math.Cos(theta_b));
             ret[2] = 4 * fb * (k - j * Math.Cos(theta_b)) + 4 * fc * (k - i * Math.Cos(theta_c));
-            ret.scale(scalingFactor);
             return ret;
         }
-        static double lawOfCosines(double c, double a, double b, double theta_c)
+        private static double lawOfCosines(double c, double a, double b, double theta_c)
         {
             a = Math.Abs(a);
             b = Math.Abs(b);

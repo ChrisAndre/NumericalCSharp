@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GaussNewton
 {
-    class MVNRA
+    class NewtonRaphsonND
     {
         public class MultivariableFunction
         {
@@ -63,7 +60,7 @@ namespace GaussNewton
             }
         }
         public MultivariableFunction func;
-        public MVNRA(MultivariableFunction func)
+        public NewtonRaphsonND(MultivariableFunction func)
         {
             this.func = func;
         }
@@ -73,14 +70,14 @@ namespace GaussNewton
         bool cappedIterations = false;
         bool useAllIterations = false;
         double deltaAttenuation = 1;
-        double spread = 1e-6;
+        double derivativeSpread = 1e-6;
         public void setUseAllIterations(bool useAllIterations)
         {
             this.useAllIterations = useAllIterations;
         }
         public void setSpread(double spread)
         {
-            this.spread = spread;
+            this.derivativeSpread = spread;
         }
         public void setMaxIterations(int iters)
         {
@@ -124,7 +121,7 @@ namespace GaussNewton
         void getGuess(double[] initialGuess, double[] constants)
 
         {
-            var grad = func.gradient(initialGuess, constants, spread);
+            var grad = func.gradient(initialGuess, constants, derivativeSpread);
             var dy = grad.dot(grad) / grad.magnitude();
             var f = func.eval(initialGuess, constants) - targetValue;
             grad.normalize();

@@ -8,13 +8,13 @@ namespace GaussNewton
     /// <summary>
     /// Base class for single-dimensional iterative root finders
     /// </summary>
-    public abstract class SDIRF
+    public abstract class RootFinder1D
     {
         public class Solution
         {
             public double Value;
             public bool Satisfies;
-            public double RangeDerivative;
+            public double RangeDerivative; //TODO
             public int Iterations;
         }
         public delegate double Function(double u);
@@ -64,14 +64,14 @@ namespace GaussNewton
     /// <remarks>
     /// Multidimensional versions exist.
     /// </remarks>
-    public class NewtonRaphsonApproximator : SDIRF
+    public class NewtonRaphson1D : RootFinder1D
     {
-        public NewtonRaphsonApproximator(Function f, Function d)
+        public NewtonRaphson1D(Function f, Function d)
             : this(f)
         {
             this.d = d;
         }
-        public NewtonRaphsonApproximator(Function f)
+        public NewtonRaphson1D(Function f)
         {
             this.f = f;
         }
@@ -126,20 +126,20 @@ namespace GaussNewton
     /// </summary>
     /// <remarks>
     /// 1st derivative at zero of f should be non-zero for cubic convergence.
-    /// Multidimensional versions exist.
+    /// Multidimensional versions exist. (TODO)
     /// </remarks>
-    public class HalleyApproximator : SDIRF
+    public class Halley1D : RootFinder1D
     {
-        public HalleyApproximator(Function f)
+        public Halley1D(Function f)
         {
             this.f = f;
         }
-        public HalleyApproximator(Function f, Function d)
+        public Halley1D(Function f, Function d)
             : this(f)
         {
             this.d = d;
         }
-        public HalleyApproximator(Function f, Function d, Function dd)
+        public Halley1D(Function f, Function d, Function dd)
             : this(f, d)
         {
             this.dd = dd;
